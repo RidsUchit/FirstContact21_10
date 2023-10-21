@@ -11,20 +11,42 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.firstcontact.firstcontact1",
+      "buildNumber": "1.0.0",
+      "supportsTablet": true,
+      // "googleServicesFile": "./GoogleService-Info.plist",
+      // "infoPlist": {
+      //    "UIBackgroundModes": [
+      //      "fetch",
+      //      "remote-notification"
+      //    ]
+      // }
+
     },
     "android": {
+      "package": "com.firstcontact.firstcontact1",
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "082fd262-a56e-4101-be44-f8d1713050fb"
+      }
     }
-  }
+  },
+  "plugins": [
+    "@react-native-firebase/app",
+    "@react-native-firebase/perf",
+    "@react-native-firebase/crashlytics"
+  ]
 }

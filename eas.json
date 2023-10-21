@@ -1,0 +1,33 @@
+{
+  "cli": {
+    "version": ">= 4.1.2"
+  },
+  "build": {
+     "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "FirstContact_V1": {
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      }
+    },
+    "FirstContact_V12": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "FirstContact_V13": {
+      "developmentClient": true
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {}
+  }
+ 
+}

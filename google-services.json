@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "550681109045",
+    "project_id": "firstcontact-1f9e4",
+    "storage_bucket": "firstcontact-1f9e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550681109045:android:608703a067fca86b59c77c",
+        "android_client_info": {
+          "package_name": "com.firstcontact.firstcontact1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550681109045-cted4ivnnlln66j5u4ut1f7eap9rb8vr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2c8LQJOpG8Wox9-yvjrgdlXyvbC6gd6k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550681109045-cted4ivnnlln66j5u4ut1f7eap9rb8vr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
