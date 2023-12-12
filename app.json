@@ -11,19 +11,20 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "bundleIdentifier": "com.firstcontact.firstcontact1",
+      "bundleIdentifier": "com.enzianservices.firstcontact",
       "buildNumber": "1.0.0",
       "supportsTablet": true,
-      // "googleServicesFile": "./GoogleService-Info.plist",
-      // "infoPlist": {
-      //    "UIBackgroundModes": [
-      //      "fetch",
-      //      "remote-notification"
-      //    ]
-      // }
-
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ]
+      }
     },
     "android": {
       "package": "com.firstcontact.firstcontact1",
@@ -32,8 +33,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -42,11 +42,29 @@
       "eas": {
         "projectId": "082fd262-a56e-4101-be44-f8d1713050fb"
       }
-    }
+    },
+    "plugins": [
+      "expo-build-properties"
+    ]
   },
   "plugins": [
     "@react-native-firebase/app",
     "@react-native-firebase/perf",
-    "@react-native-firebase/crashlytics"
+    "@react-native-firebase/crashlytics",
+    "@notifee/react-native",
+    "expo-image-picker",
+    {
+      "photosPermission": "The Firstcontact app required your photos to let you share them with your friends.",
+      "cameraPermission": "The Firstcontact app required your camera permission for capture image.",
+      "microphonePermission": "Allow Firstcontact to access your microphone"
+    },
+    "expo-build-properties",
+    {
+      "ios": {
+        "deploymentTarget": "13.0",
+        "useFrameworks": "static",
+        "modular_headers":true
+      }
+    }
   ]
 }

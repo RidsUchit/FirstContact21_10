@@ -5,11 +5,14 @@ import {
   FlatList,
   StyleSheet,
   ScrollView,
+  StatusBar,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import BirthdayCard from "./BirthdayCard";
 import axios from "axios";
-
+import constants from "../../constants";
+import Component from "../../Component";
 const EventScreen = () => {
   const [birthdays, setbirthdays] = useState([]);
   const [upcomingBirthdays, setupcomingBirthdays] = useState([]);
@@ -95,26 +98,40 @@ const EventScreen = () => {
     return <Text style={styles.headingText}>Upcoming Birthday</Text>;
   };
   return (
-    <View style={styles.container}>
-      {isLoading ? (
-        renderLoader()
-      ) : (
-        <>
-          <FlatList
-            data={birthdays}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={_renderitem}
-            ListHeaderComponent={renderHeader_TodayBirthday}
-          />
-          <FlatList
-            data={upcomingBirthdays}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={_renderitem}
-            ListHeaderComponent={renderHeader_UpcomingBirthday}
-          />
-        </>
-      )}
-    </View>
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={constants.colors.primary}
+      />
+      <SafeAreaView style={styles.container}>
+        <Component.AppHeader
+          headerTitle="Birthdays"
+          isBackBtn={true}
+          onPressBtn={() => {
+            navigation.goBack();
+          }}
+        />
+
+        {isLoading ? (
+          renderLoader()
+        ) : (
+          <>
+            <FlatList
+              data={birthdays}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={_renderitem}
+              ListHeaderComponent={renderHeader_TodayBirthday}
+            />
+            <FlatList
+              data={upcomingBirthdays}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={_renderitem}
+              ListHeaderComponent={renderHeader_UpcomingBirthday}
+            />
+          </>
+        )}
+      </SafeAreaView>
+    </>
   );
 };
 

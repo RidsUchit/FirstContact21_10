@@ -4,11 +4,15 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import HTMLView from "react-native-htmlview";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Component from "../../Component";
+import constants from "../../constants";
 
 const JobDetailScreen = ({ route, navigation }) => {
   const JobID = route.params.jobid;
@@ -42,29 +46,37 @@ const JobDetailScreen = ({ route, navigation }) => {
   const content = jobDetails.map((obj) => obj.Content);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Text style={styles.goBackButton}>Go Back</Text>
-        </TouchableOpacity>
-      </View>
-      <ScrollView contentContainerStyle={styles.content}>
-        {jobDetails && (
-          <>
-            <Text style={styles.jobTitle}>{title}</Text>
-            <Text style={styles.jobLocation}>Job Location: {city} </Text>
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={constants.colors.primary}
+      />
+      <SafeAreaView style={styles.container}>
+        <Component.AppHeader
+          headerTitle="Jobs"
+          isBackBtn={true}
+          onPressBtn={() => {
+            navigation.goBack();
+          }}
+        />
+        <ScrollView contentContainerStyle={styles.content}>
+          {jobDetails && (
+            <>
+              <Text style={styles.jobTitle}>{title}</Text>
+              <Text style={styles.jobLocation}>Job Location: {city} </Text>
 
-            <HTMLView value={content.toString()} />
-          </>
-        )}
-      </ScrollView>
-      <TouchableOpacity
-        style={styles.applyButton}
-        onPress={() => navigation.navigate("JobApply", { jobid: JobID })}
-      >
-        <Text style={styles.applyButtonText}>Quick Apply For This Job</Text>
-      </TouchableOpacity>
-    </View>
+              <HTMLView value={content.toString()} />
+            </>
+          )}
+        </ScrollView>
+        <TouchableOpacity
+          style={styles.applyButton}
+          onPress={() => navigation.navigate("JobApply", { jobid: JobID })}
+        >
+          <Text style={styles.applyButtonText}>Quick Apply For This Job</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </>
   );
 };
 

@@ -50,16 +50,13 @@ const Login = ({ navigation }) => {
             deviceType: Platform.OS == "ios" ? "ios" : "android",
           }
         );
+        console.log("auth error==> response ", response);
         setIsLoading(false);
         if (response.status === 200) {
           await AsyncStorage.setItem("IsLoggedIn", JSON.stringify(true));
           await AsyncStorage.setItem(
             "UserId",
             JSON.stringify(response.data.UserId)
-          );
-          await AsyncStorage.setItem(
-            "RoleId",
-            JSON.stringify(response.data.RoleId)
           );
           await AsyncStorage.setItem("UserName", JSON.stringify(username));
           // Redirect to the Home screen after successful login
@@ -70,6 +67,7 @@ const Login = ({ navigation }) => {
           setContextState({
             ...contextState,
             authToken: true,
+            userId: response.data.UserId,
           });
         } else {
           // Server returned an unexpected response
@@ -79,7 +77,7 @@ const Login = ({ navigation }) => {
         setIsLoading(false);
 
         // Error occurred during the HTTP request or server returned an error
-        console.log(error);
+        console.log("auth error==>", error);
         Alert.alert("First Contact", "Something went wrong, Please try again.");
 
         // if (error.response && error.response.status === 401) {

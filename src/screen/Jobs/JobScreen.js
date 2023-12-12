@@ -7,9 +7,13 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
+  SafeAreaView,
 } from "react-native";
 
 import axios from "axios";
+import constants from "../../constants";
+import Component from "../../Component";
 
 const JobScreen = ({ navigation }) => {
   const [jobData, setJobData] = useState([]);
@@ -49,38 +53,51 @@ const JobScreen = ({ navigation }) => {
   };
 
   const renderJobItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handleJobDetail(item)}>
-      <View style={styles.jobItem}>
-        <Text style={styles.jobTitle}>{item.Title}</Text>
-        <Text style={styles.jobLocation}>{item.City}</Text>
-        {/* <Text style={styles.jobId}>{`Job ID: ${item.JobDetailID}`}</Text> */}
-      </View>
+    <TouchableOpacity
+      style={styles.jobItem}
+      onPress={() => handleJobDetail(item)}
+    >
+      <Text style={styles.jobTitle}>{item.Title}</Text>
+      <Text style={styles.jobLocation}>{item.City}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator
-          size="large"
-          color="#3498db"
-          style={styles.loadingIndicator}
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={constants.colors.primary}
+      />
+      <SafeAreaView style={styles.container}>
+        <Component.AppHeader
+          headerTitle="Jobs"
+          isBackBtn={true}
+          onPressBtn={() => {
+            navigation.goBack();
+          }}
         />
-      ) : (
-        <FlatList
-          data={jobData}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderJobItem}
-        />
-      )}
-    </View>
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            color="#3498db"
+            style={styles.loadingIndicator}
+          />
+        ) : (
+          <FlatList
+            contentContainerStyle={{ marginTop: 10 }}
+            data={jobData}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderJobItem}
+          />
+        )}
+      </SafeAreaView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#f0f0f0",
   },
   heading: {
@@ -89,15 +106,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   jobItem: {
-    backgroundColor: "white",
-    padding: 20,
+    padding: 10,
+    marginHorizontal: 10,
     marginBottom: 10,
     borderRadius: 10,
+    backgroundColor: constants.colors.white,
+    marginTop: 5,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   jobTitle: {
     fontSize: 18,

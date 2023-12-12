@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDkTrNJH2qCe1TI5rPcunnkbhhn4zMGqIU</string>
+	<key>GCM_SENDER_ID</key>
+	<string>550681109045</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.enzianservices.firstcontact</string>
+	<key>PROJECT_ID</key>
+	<string>firstcontact-1f9e4</string>
+	<key>STORAGE_BUCKET</key>
+	<string>firstcontact-1f9e4.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:550681109045:ios:22e53803209d978659c77c</string>
+</dict>
+</plist>

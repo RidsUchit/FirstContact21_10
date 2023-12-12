@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -9,9 +10,14 @@ import { enableScreens } from "react-native-screens";
 
 import Login from "./src/screen/login/Login";
 import HomeTabs from "./HomeTabs";
-import messaging from "@react-native-firebase/messaging";
+
 import { Alert } from "react-native";
 import { AppContext } from "./src/Context/appContext";
+
+import { foregroundHandler } from "./src/utils/notification";
+import notifee, { EventType } from "@notifee/react-native";
+import messaging from "@react-native-firebase/messaging";
+import * as Notifications from "expo-notifications";
 
 const Stack = createStackNavigator();
 const AiuthStack = createStackNavigator();
@@ -24,6 +30,7 @@ const App = () => {
   const [contextState, setContextState] = useState({
     FCMToken: "",
     authToken: "",
+    userId: "",
   });
 
   enableScreens(false);
@@ -54,7 +61,6 @@ const App = () => {
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
     if (enabled) {
       console.log("Authorization status:", authStatus);
     }
@@ -63,9 +69,18 @@ const App = () => {
   useEffect(() => {
     checkLoginStatus();
 
-    // After grant the permission take the token
-    // Note : messaging is only accessiable in the build so whenever run code please comment  the messaging object code
-    // otherwise it gives the error
+    if (Platform.OS == "android") {
+      (async () => {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== "granted") {
+          // Handle the case where the user denies notification permissions
+          console.log("Notification permissions denied");
+        } else {
+          // Permission granted, you can now send and receive notifications
+          console.log("Notification permissions granted");
+        }
+      })();
+    }
 
     if (requestUserPermission()) {
       messaging()
@@ -77,6 +92,37 @@ const App = () => {
           });
         });
     }
+
+    const foregroundUnsubscribe = notifee.onForegroundEvent(
+      ({ type, detail }) => {
+        switch (type) {
+          case EventType.DISMISSED:
+            break;
+          case EventType.PRESS:
+            // notificationHandler(detail.notification);
+            break;
+        }
+      }
+    );
+
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      foregroundHandler(remoteMessage);
+    });
+
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      // notification handler
+    });
+
+    messaging()
+      .getInitialNotification()
+      .then((message) => {
+        // notification handler
+      });
+
+    return () => {
+      unsubscribe();
+      foregroundUnsubscribe();
+    };
   }, []);
 
   return (
@@ -87,7 +133,7 @@ const App = () => {
             <Stack.Screen name="HomeTabs" component={HomeTabs} />
           </Stack.Navigator>
         ) : (
-          <AiuthStack.Navigator>
+          <AiuthStack.Navigator screenOptions={{ headerShown: false }}>
             <AiuthStack.Screen name="Login" component={Login} />
           </AiuthStack.Navigator>
         )}

@@ -5,9 +5,14 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
+  SafeAreaView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
+import constants from "../../constants";
+import Component from "../../Component";
 import Avatar from "../../../assets/avatar.png";
 import { getUserId } from "../../Component/credentials";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -54,53 +59,68 @@ const ProfileScreen = ({ navigation }) => {
   const ProfileImage = user.map((obj) => obj.ProfileImage);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {ProfileImage ? (
-        <Image
-          source={{
-            uri: `https://mgfcuploads.s3-ap-southeast-1.amazonaws.com/fcintranet/ProfileImages/${ProfileImage}`,
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={constants.colors.primary}
+      />
+      <SafeAreaView style={styles.container}>
+        <Component.AppHeader
+          headerTitle="Profile"
+          isBackBtn={true}
+          onPressBtn={() => {
+            navigation.goBack();
           }}
-          style={styles.avatar}
-          resizeMode="contain"
         />
-      ) : (
-        <Image style={styles.avatar} source={Avatar} resizeMode="contain" />
-      )}
-
-      <Text style={styles.name}>{Name}</Text>
-      {/* <Text style={styles.email}>john@firstcontact.co</Text> */}
-      <View style={styles.statsContainer}>
-        <View style={styles.stat}>
-          <Text style={styles.statTitle}>Followers</Text>
-          <Text style={styles.statValue}>150</Text>
-        </View>
-        <View style={styles.stat}>
-          <Text style={styles.statTitle}>Following</Text>
-          <Text style={styles.statValue}>200</Text>
-        </View>
-        <View style={styles.stat}>
-          <Text style={styles.statTitle}>Posts</Text>
-          <Text style={styles.statValue}>25</Text>
-        </View>
-      </View>
-      {
-        /* Conditionally render the "Send notification" button for admin users */
-        isAdmin && (
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.notificationButton}
-              onPress={() => {
-                navigation.navigate("Broadcast");
+        <ScrollView contentContainerStyle={styles.innercontainer}>
+          {ProfileImage ? (
+            <Image
+              source={{
+                uri: `https://mgfcuploads.s3-ap-southeast-1.amazonaws.com/fcintranet/ProfileImages/${ProfileImage}`,
               }}
-            >
-              <Text style={styles.notificationButtonText}>
-                Send Notification To All Users
-              </Text>
-            </TouchableOpacity>
+              style={styles.avatar}
+              resizeMode="contain"
+            />
+          ) : (
+            <Image style={styles.avatar} source={Avatar} resizeMode="contain" />
+          )}
+
+          <Text style={styles.name}>{Name}</Text>
+          {/* <Text style={styles.email}>john@firstcontact.co</Text> */}
+          <View style={styles.statsContainer}>
+            <View style={styles.stat}>
+              <Text style={styles.statTitle}>Followers</Text>
+              <Text style={styles.statValue}>150</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statTitle}>Following</Text>
+              <Text style={styles.statValue}>200</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statTitle}>Posts</Text>
+              <Text style={styles.statValue}>25</Text>
+            </View>
           </View>
-        )
-      }
-    </ScrollView>
+          {
+            /* Conditionally render the "Send notification" button for admin users */
+            isAdmin && (
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={styles.notificationButton}
+                  onPress={() => {
+                    navigation.navigate("SendNotification");
+                  }}
+                >
+                  <Text style={styles.notificationButtonText}>
+                    Send Notification To All Users
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )
+          }
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -108,6 +128,10 @@ export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  innercontainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",

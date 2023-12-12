@@ -31,9 +31,9 @@ const BirthdayCard = ({
           <Text style={styles.userName}>{Username}</Text>
           <Text style={styles.birthdate}>{BirthDateMonth}</Text>
         </View>
-        <View style={styles.ageCircle}>
+        {/* <View style={styles.ageCircle}>
           <Text style={styles.ageText}>{age_turning}</Text>
-        </View>
+        </View> */}
       </View>
     </View>
   );

@@ -1,4 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+  useContext,
+} from "react";
 import {
   View,
   Text,
@@ -11,6 +18,7 @@ import {
   RefreshControl,
   SafeAreaView,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,14 +26,28 @@ import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import PostItem from "./PostItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import Component from "../../Component";
+import { getCommentListByPostId, postCommentByPostId } from "./DashboardAction";
+import { AppContext } from "../../Context/appContext";
 
 const Dashboard = () => {
+  const { contextState } = useContext(AppContext);
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isEndReached, setIsEndReached] = useState(false);
   const navigation = useNavigation();
+  const bottomSheetModalRef = useRef(null);
+  const [userComment, setUserCmtDetails] = useState({
+    cmtPostId: "",
+    cmtOnPost: "",
+    commentList: [],
+  });
 
   useEffect(() => {
     fetchData();
@@ -38,6 +60,37 @@ const Dashboard = () => {
       navigation.navigate("Home");
     }
   };
+
+  const handlePresentModalPress = (postId) => {
+    setIsLoading(true);
+    getCommentListByPostId(
+      postId,
+      (res) => {
+        console.log("resresres=>", postId);
+        setUserCmtDetails({
+          ...userComment,
+          commentList: res,
+          cmtPostId: postId,
+        });
+        setIsLoading(false);
+        bottomSheetModalRef.current?.present();
+      },
+      (err) => {
+        setIsLoading(false);
+        setUserCmtDetails({
+          ...userComment,
+          commentList: [],
+        });
+        console.log("resresres=> err", err);
+        bottomSheetModalRef.current?.present();
+      }
+    );
+  };
+
+  const snapPoints = useMemo(() => ["10%", "80%"], []);
+  const handleSheetChanges = useCallback((index) => {
+    console.log("handleSheetChanges", index);
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -62,7 +115,7 @@ const Dashboard = () => {
         }
       });
     } catch (error) {
-      console.error(error);
+      console.error("error ===>", error);
       setIsLoading(false);
     }
   };
@@ -73,11 +126,7 @@ const Dashboard = () => {
   };
 
   const renderLoader = () => {
-    return isLoading ? (
-      <View style={styles.loaderStyle}>
-        <ActivityIndicator size="large" color="#aaa" />
-      </View>
-    ) : null;
+    return isLoading ? <Component.LoaderView /> : null;
   };
   const loadMoreItem = () => {
     if (!isEndReached) {
@@ -97,38 +146,117 @@ const Dashboard = () => {
     }
     return null;
   };
-
-  const _renderitem = ({ item }) => (
-    <PostItem
-      UserName={item.UserName}
-      UserImage={item.UserImage}
-      PostId={item.PostId}
-      PostImage={item.PostImage}
-      Post={item.Post}
-      Likes={item.Likes}
-      Comments={item.Comments}
-      Content={item.Content}
-      IsLike={item.IsLike}
-      onPressLike={() => handleLike(item.PostId)}
-    />
-  );
+  const cleanCurrentCmt = () => {
+    setUserCmtDetails({
+      cmtOnPost: "",
+      cmtPostId: "",
+    });
+  };
+  const _renderitem = ({ item }) => {
+    return (
+      <PostItem
+        UserName={item.UserName}
+        UserImage={item.UserImage}
+        PostId={item.PostId}
+        PostImage={item.PostImage}
+        Post={item.Post}
+        Likes={item.Likes}
+        Comments={item.Comments}
+        Content={item.Content}
+        IsLike={item.IsLike}
+        postTime={"32 mins"}
+        onPressLike={() => handleLike(item.PostId)}
+        onPressComment={() => {
+          handlePresentModalPress(item.PostId);
+        }}
+        onPressProfile={() => navigation.navigate("OtherProfile")}
+      />
+    );
+  };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.PostId.toString()}
-        onEndReached={loadMoreItem}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderLoader}
-        renderItem={_renderitem}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-      />
-      {/* {isEndReached && <Text style={styles.endMessage}>End of Results</Text>} */}
-      {renderEndMessage()}
-    </View>
+    <BottomSheetModalProvider>
+      <View style={styles.container}>
+        <FlatList
+          data={data}
+          contentContainerStyle={styles.postList}
+          keyExtractor={(item) => item.PostId.toString()}
+          onEndReached={loadMoreItem}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderLoader}
+          renderItem={_renderitem}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+        />
+        {/* {isEndReached && <Text style={styles.endMessage}>End of Results</Text>} */}
+        {renderEndMessage()}
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          backgroundStyle={{
+            margin: 4,
+            shadowColor: "red",
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 1.41,
+            elevation: 4,
+          }}
+          onDismiss={() => {
+            cleanCurrentCmt();
+          }}
+        >
+          <Component.CustomCommentSheet
+            commentMessage={(text) => {
+              console.log("textt", text);
+              setUserCmtDetails({
+                ...userComment,
+                cmtOnPost: text,
+              });
+            }}
+            textMsg={userComment.cmtOnPost}
+            onSend={() => {
+              let commentData = {
+                comment: userComment.cmtOnPost,
+                postId: userComment?.cmtPostId,
+                userId: contextState.userId,
+              };
+              postCommentByPostId(
+                commentData,
+                (res) => {
+                  getCommentListByPostId(
+                    userComment?.cmtPostId,
+                    (res) => {
+                      console.log("postCommentByPostId", res);
+
+                      setUserCmtDetails({
+                        ...userComment,
+                        commentList: res,
+                        cmtOnPost: "",
+                      });
+                      setIsLoading(false);
+                    },
+                    (err) => {
+                      setIsLoading(false);
+                      console.log("resresres=> err", err);
+                    }
+                  );
+                },
+                (err) => {
+                  console.log("new comment res err", err);
+                }
+              );
+            }}
+            commentData={userComment.commentList}
+          />
+        </BottomSheetModal>
+      </View>
+    </BottomSheetModalProvider>
   );
 };
 
@@ -137,7 +265,7 @@ export default Dashboard;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    //backgroundColor: "grey",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -159,5 +287,10 @@ const styles = StyleSheet.create({
   },
   homeIcon: {
     marginLeft: 5,
+  },
+  postList: {
+    margin: 10,
+    marginBottom: 0,
+    borderRadius: 20,
   },
 });

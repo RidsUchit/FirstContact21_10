@@ -9,18 +9,23 @@ import {
   FlatList,
   TextInput,
   Alert,
+  ActivityIndicator,
+  StatusBar,
+  SafeAreaView,
 } from "react-native";
 import axios from "axios";
 //import { SelectList } from "react-native-dropdown-select-list";
 import { Picker } from "@react-native-picker/picker";
 import { ViewPropTypes } from "deprecated-react-native-prop-types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Component from "../../Component";
+import CustomDropDown from "../../Component/CustomDropdown/customDropdown";
+import constants from "../../constants";
 const JobApplyScreen = ({ route, navigation }) => {
   const JobID = route.params.jobid;
   const [input1, setinput1] = useState("");
   const [input2, setinput2] = useState("");
   const [data, setData] = useState([]);
-  // const [Username, setUsername] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -105,8 +110,6 @@ const JobApplyScreen = ({ route, navigation }) => {
     }
   };
   const renderItem = ({ item, index }) => {
-    // Check if it's the last item and render the Apply button
-
     let answerComponent;
     switch (item.QuestionTypeId.toString()) {
       case "1":
@@ -120,14 +123,7 @@ const JobApplyScreen = ({ route, navigation }) => {
         );
         break;
       case "2":
-        answerComponent = (
-          <TextInput
-            placeholder="Type Yes/No"
-            multiline
-            value={input2}
-            onChangeText={(text) => setinput2(text)}
-          />
-        );
+        answerComponent = <CustomDropDown onChange={(option) => {}} />;
         break;
       case null:
         // Implement the selection answer component based on your requirements
@@ -154,20 +150,37 @@ const JobApplyScreen = ({ route, navigation }) => {
     );
   };
   return (
-    <View>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Text style={styles.goBackButton}>Go Back</Text>
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.ID}
-        ListFooterComponent={renderApply}
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={constants.colors.primary}
       />
-    </View>
+      <SafeAreaView style={styles.container}>
+        <Component.AppHeader
+          headerTitle="Jobs"
+          isBackBtn={true}
+          onPressBtn={() => {
+            navigation.goBack();
+          }}
+        />
+
+        {data && data.length > 0 ? (
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.ID}
+            ListFooterComponent={renderApply}
+          />
+        ) : (
+          <View style={styles.emptyScreen}>
+            <ActivityIndicator
+              size={"large"}
+              color={constants.colors.primary}
+            />
+          </View>
+        )}
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -175,6 +188,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9f9f9",
+  },
+  emptyScreen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "60%",
   },
   header: {
     backgroundColor: "#3498db",
@@ -206,7 +225,7 @@ const styles = StyleSheet.create({
   },
   answerItem: {
     backgroundColor: "#f9f9f9",
-    padding: 10,
+    padding: 8,
     marginBottom: 10,
     borderRadius: 10,
   },

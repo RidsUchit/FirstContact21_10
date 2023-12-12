@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, StatusBar, SafeAreaView } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import axios from "axios";
-
+import constants from "../../constants";
+import Component from "../../Component";
 const RewardScreen = () => {
   const [rewards, setRewards] = useState([]);
 
@@ -32,36 +33,61 @@ const RewardScreen = () => {
   const RemainingBalance = rewards.map((obj) => obj.RemainingBalance);
   const blockColors = ["#6495ED", "#D66FCA", "#EBB449", "#52BE80"];
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <View
-          style={[styles.blockWithShadow, { backgroundColor: blockColors[0] }]}
-        >
-          <Text style={styles.title}>Points Earned</Text>
-          <Text style={styles.text}>{PointsEarned}</Text>
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={constants.colors.primary}
+      />
+      <SafeAreaView style={styles.container}>
+        <Component.AppHeader
+          headerTitle="Rewards"
+          isBackBtn={true}
+          onPressBtn={() => {
+            navigation.goBack();
+          }}
+        />
+        <View style={styles.row}>
+          <View
+            style={[
+              styles.blockWithShadow,
+              { backgroundColor: blockColors[0] },
+            ]}
+          >
+            <Text style={styles.title}>Points Earned</Text>
+            <Text style={styles.text}>{PointsEarned}</Text>
+          </View>
+          <View
+            style={[
+              styles.blockWithShadow,
+              { backgroundColor: blockColors[1] },
+            ]}
+          >
+            <Text style={styles.title}>Current Month Point</Text>
+            <Text style={styles.text}>{CurrentMonthPoints}</Text>
+          </View>
         </View>
-        <View
-          style={[styles.blockWithShadow, { backgroundColor: blockColors[1] }]}
-        >
-          <Text style={styles.title}>Current Month Point</Text>
-          <Text style={styles.text}>{CurrentMonthPoints}</Text>
+        <View style={styles.row}>
+          <View
+            style={[
+              styles.blockWithShadow,
+              { backgroundColor: blockColors[2] },
+            ]}
+          >
+            <Text style={styles.title}>Points Redeemed</Text>
+            <Text style={styles.text}>{PointsRedeemed}</Text>
+          </View>
+          <View
+            style={[
+              styles.blockWithShadow,
+              { backgroundColor: blockColors[3] },
+            ]}
+          >
+            <Text style={styles.title}>Remaining Balance</Text>
+            <Text style={styles.text}>{RemainingBalance}</Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.row}>
-        <View
-          style={[styles.blockWithShadow, { backgroundColor: blockColors[2] }]}
-        >
-          <Text style={styles.title}>Points Redeemed</Text>
-          <Text style={styles.text}>{PointsRedeemed}</Text>
-        </View>
-        <View
-          style={[styles.blockWithShadow, { backgroundColor: blockColors[3] }]}
-        >
-          <Text style={styles.title}>Remaining Balance</Text>
-          <Text style={styles.text}>{RemainingBalance}</Text>
-        </View>
-      </View>
-    </View>
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -71,8 +97,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
   },
   row: {
     flexDirection: "row",
